@@ -6,12 +6,12 @@ def read_puzzle(file):
 def solve(puzzle):
   horizontal = depth = aim = 0
   for direction, x in puzzle:
-    if direction == 'forward': 
+    if direction == 'forward':
       horizontal += x
-      depth      += aim * x
+      depth += aim * x
     else:
       aim += x if direction == 'down' else -x
-  return horizontal * aim, horizontal * depth  
-    
-    
+  return horizontal * aim, horizontal * depth
+
+
 print(solve(read_puzzle('Tag_02.txt')))
