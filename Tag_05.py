@@ -1,27 +1,21 @@
 import re
-from collections import defaultdict
+from collections import Counter
 
 
 def read_puzzle(file):
   with open(file) as f:
-    return [[int(coord) for coord in re.findall('\d+', row)] for row in f]
+    return [[int(n) for n in re.findall('\d+', row)] for row in f]
 
 
-def solve(puzzle):
-  diagram1, diagram2 = defaultdict(int), defaultdict(int)
-  
+def solve(puzzle, part1):
+  diagram = Counter()
   for x1, y1, x2, y2 in puzzle:
-    points_count = max(abs(x1-x2), abs(y1-y2))
-    stepX, stepY = (x2-x1)//points_count, (y2-y1)//points_count
-    
-    for n in range(points_count+1):
-      x, y = x1 + n * stepX, y1 + n * stepY
-      diagram2[(x, y)] += 1
-      if x1 == x2 or y1 == y2:
-        diagram1[(x, y)] += 1
+    if part1 and x1 != x2 and y1 != y2: continue 
+    points = max(abs(x1-x2), abs(y1-y2))
+    stepX, stepY = (x2-x1)//points, (y2-y1)//points
+    diagram.update([(x1 + n * stepX, y1 + n * stepY) for n in range(points+1)])
+  return sum(x > 1 for x in diagram.values())  
   
-  return sum(x > 1 for x in diagram1.values()), \
-         sum(x > 1 for x in diagram2.values())
 
-
-print(solve(read_puzzle('Tag_05.txt')))
+print(solve(read_puzzle('Tag_05.txt'), True))
+print(solve(read_puzzle('Tag_05.txt'),False))
