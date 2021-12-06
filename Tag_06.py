@@ -5,7 +5,7 @@ def read_puzzle(file):
 
 def solve(puzzle, days):
   for _ in range(days):
-    puzzle     = puzzle[1:] + puzzle[:1]
+    puzzle = puzzle[1:] + puzzle[:1]
     puzzle[6] += puzzle[8]
   return sum(puzzle)
 
