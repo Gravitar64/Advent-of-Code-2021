@@ -1,22 +1,14 @@
-from time import perf_counter as pfc
-from collections import deque
-
-
 def read_puzzle(file):
   with open(file) as f:
-    return map(int, f.readline().split(','))
+    return list(map(f.read().count, '012345678'))
 
 
 def solve(puzzle, days):
-  counts = deque([0]*9)
-  for count in puzzle:
-    counts[count] += 1
   for _ in range(days):
-    counts.rotate(-1)
-    counts[6] += counts[8]
-  return sum(counts)
+    puzzle     = puzzle[1:] + puzzle[:1]
+    puzzle[6] += puzzle[8]
+  return sum(puzzle)
 
-start = pfc()
+
 print(solve(read_puzzle('Tag_06.txt'), 80))
 print(solve(read_puzzle('Tag_06.txt'), 256))
-print(f'Solved in {pfc()-start:.6f} sec.')
