@@ -4,15 +4,15 @@ def read_puzzle(file):
 
 
 def solve(puzzle):
-  #part1
   length = len(puzzle)
   mid = puzzle[length//2]
   part1 = sum(abs(x-mid) for x in puzzle)
   
-  #part2
   mean = sum(puzzle) // length
   gauss = lambda x: x * (x+1) // 2
-  return part1, sum(gauss(abs(x-mean)) for x in puzzle)  
+  part2 = sum(gauss(abs(x-mean)) for x in puzzle)
+  
+  return part1, part2  
 
 
 print(solve(read_puzzle('Tag_07.txt')))
