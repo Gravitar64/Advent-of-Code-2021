@@ -1,3 +1,5 @@
+from time import perf_counter as pfc
+
 def read_puzzle(file):
   with open(file) as f:
     return sorted([int(x) for x in f.readline().split(',')])
@@ -15,5 +17,6 @@ def solve(puzzle):
   
   return part1, part2  
 
-
+start=pfc()
 print(solve(read_puzzle('Tag_07.txt')))
+print(pfc()-start)

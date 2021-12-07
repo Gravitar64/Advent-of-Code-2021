@@ -1,5 +1,6 @@
 import re
 from collections import Counter
+from time import perf_counter as pfc
 
 
 def read_puzzle(file):
@@ -17,5 +18,9 @@ def solve(puzzle, part1):
   return sum(x > 1 for x in diagram.values())  
   
 
+start=pfc()
 print(solve(read_puzzle('Tag_05.txt'), True))
+print(pfc()-start)
+start=pfc()
 print(solve(read_puzzle('Tag_05.txt'),False))
+print(pfc()-start)

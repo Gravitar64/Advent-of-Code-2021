@@ -1,3 +1,5 @@
+from time import perf_counter as pfc
+
 def read_puzzle(file):
   with open(file) as f:
     return [row.strip() for row in f]
@@ -34,4 +36,6 @@ def solve(puzzle):
   return int(gamma, 2) * int(epsilon, 2),  int(oxygen, 2) * int(co2, 2)
 
 
+start=pfc()
 print(solve(read_puzzle('Tag_03.txt')))
+print(pfc()-start)

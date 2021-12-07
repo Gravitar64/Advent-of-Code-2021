@@ -1,3 +1,5 @@
+from time import perf_counter as pfc
+
 def read_puzzle(file):
   with open(file) as f:
     numbers, *boards = f.read().split('\n\n')
@@ -26,4 +28,6 @@ def solve(numbers, boards):
   return results[0], results[-1]
 
 
+start=pfc()
 print(solve(*read_puzzle('Tag_04.txt')))
+print(pfc()-start)
