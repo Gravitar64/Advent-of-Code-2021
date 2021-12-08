@@ -17,12 +17,12 @@ def solve(patterns, outputs):
   part1 = sum(len(n) in {2, 4, 3, 7} for row in outputs for n in row)
   
   part2 = 0
-  t = {632:'0', 222:'1', 521:'2', 532:'3', 442:'4',  
-       531:'5', 631:'6', 322:'7', 742:'8', 642:'9'}
+  t = {(6,3,2):'0', (2,2,2):'1', (5,2,1):'2', (5,3,2):'3', (4,4,2):'4',  
+       (5,3,1):'5', (6,3,1):'6', (3,2,2):'7', (7,4,2):'8', (6,4,2):'9'}
   
   for pattern, output in zip(patterns,outputs):
-    part2 += int(''.join(
-                 [t[len(s)*100+len(s&pattern[4])*10+len(s&pattern[2])]          
+    part2 += int(''.join([
+                 t[(len(s),len(s&pattern[4]),len(s&pattern[2]))]          
                  for s in output]))
   
   return part1, part2
