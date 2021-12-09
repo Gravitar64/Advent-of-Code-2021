@@ -8,25 +8,21 @@ def read_puzzle(file):
             for x, n in enumerate(row.strip())}
 
 
-def neighbors(x, y):
-  for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
-    yield (x+dx, y+dy)
-
-
-def is_low_point(pos, value, puzzle):
-  for neighbor in neighbors(*pos):
+def is_low_point(x,y, value, puzzle):
+  for dx,dy in ((-1,0), (1,0), (0,1), (0,-1)):
+    neighbor = (x+dx, y+dy)
     if puzzle.get(neighbor, 9) <= value: break
   else:
     return True
 
 
-def bassin(node, puzzle):
-  queue, visited = [node], {node}
+def bassin(queue, visited, puzzle):
   while queue:
-    pos = queue.pop(0)
-    for neighbor in neighbors(*pos):
+    x,y = queue.pop(0)
+    for dx,dy in ((-1,0), (1,0), (0,1), (0,-1)):
+      neighbor = (x+dx, y+dy)
       value = puzzle.get(neighbor, 9)
-      if value == 9 or neighbor in visited or value <= puzzle[pos]: continue
+      if value == 9 or neighbor in visited or value <= puzzle[(x,y)]: continue
       visited.add(neighbor)
       queue.append(neighbor)
   return len(visited)
@@ -34,12 +30,10 @@ def bassin(node, puzzle):
 
 def solve(puzzle):
   part1, part2 = 0, []
-  
   for pos, value in puzzle.items():
-    if not is_low_point(pos, value, puzzle): continue
+    if not is_low_point(*pos, value, puzzle): continue
     part1 += value+1
-    part2.append(bassin(pos, puzzle))
-
+    part2.append(bassin([pos], {pos}, puzzle))
   return part1, math.prod(sorted(part2)[-3:])
 
 
