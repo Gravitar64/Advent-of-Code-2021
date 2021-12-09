@@ -5,13 +5,12 @@ import math
 def read_puzzle(file):
   with open(file) as f:
     return {(x, y): int(n) for y, row in enumerate(f.readlines())
-            for x, n in enumerate(row.strip())}
+            for x, n in enumerate(row.strip()) if n != '9'}
 
 
 def is_low_point(x,y, value, puzzle):
-  for dx,dy in ((-1,0), (1,0), (0,1), (0,-1)):
-    neighbor = (x+dx, y+dy)
-    if puzzle.get(neighbor, 9) <= value: break
+  for neighbor in ((x-1,y), (x+1,y), (x,y+1), (x,y-1)):
+    if value > puzzle.get(neighbor, 9): break
   else:
     return True
 
@@ -19,10 +18,9 @@ def is_low_point(x,y, value, puzzle):
 def bassin(queue, visited, puzzle):
   while queue:
     x,y = queue.pop(0)
-    for dx,dy in ((-1,0), (1,0), (0,1), (0,-1)):
-      neighbor = (x+dx, y+dy)
+    for neighbor in ((x-1,y), (x+1,y), (x,y+1), (x,y-1)):
       value = puzzle.get(neighbor, 9)
-      if value == 9 or neighbor in visited or value <= puzzle[(x,y)]: continue
+      if value == 9 or neighbor in visited or puzzle[(x,y)] > value: continue
       visited.add(neighbor)
       queue.append(neighbor)
   return len(visited)
