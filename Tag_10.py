@@ -7,23 +7,22 @@ def read_puzzle(file):
 
 
 def solve(puzzle):
-  pairs = {a: b for a, b in zip('([{<', ')]}>')}
-  points = {a: b for a, b in zip(')]}>', [(3, 1), (57, 2), (1197, 3), (25137, 4)])}
+  pairs  = {a: b for a, b in zip('([{<', ')]}>')}
+  points = {a: b for a, b in zip(')]}>', [3, 57, 1197, 25137])}
 
   part1, part2 = 0, []
   for row in puzzle:
-    stack = []
+    stack, score = [], 0
     for c in row:
       if c in pairs:
         stack.append(pairs[c])
       elif stack.pop() != c:
-        part1 += points[c][0]
+        part1 += points[c]
         break
     else:
-      total_score = 0
       for c in reversed(stack):
-        total_score = total_score*5+points[c][1]
-      part2.append(total_score)
+        score = score * 5 + ' )]}>'.index(c)
+      part2.append(score)
   return part1, sorted(part2)[len(part2)//2]
 
 
