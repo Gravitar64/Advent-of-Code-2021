@@ -7,9 +7,9 @@ def read_puzzle(file):
   with open(file) as f:
     patterns, outputs = [], []
     for row in f:
-      a,b = row.split('|')
-      patterns.append({len(x):set(x) for x in a.split() if len(x) in {2,4}})
-      outputs.append([set(x) for x in b.split()])
+      left, right= row.split('|')
+      patterns.append({len(x):set(x) for x in left.split() if len(x) in {2,4}})
+      outputs.append([set(x) for x in right.split()])
   return patterns, outputs    
 
 
@@ -25,6 +25,18 @@ def solve(patterns, outputs):
                          for s in output))
   return part1, part2
 
+def gen_t():
+  example = 'abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg'.split()
+  pattern = {len(x):set(x) for x in example}
+  for x in example:
+    x = set(x)
+    print(len(x), len(x&pattern[2]), len(x&pattern[3]), len(x&pattern[4]))
+
+
+
+
 start = pfc()
 print(solve(*read_puzzle('Tag_08.txt')))
 print(pfc()-start)
+
+gen_t()
