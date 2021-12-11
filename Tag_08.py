@@ -15,19 +15,20 @@ def gen_signatures():
   example = 'abcefg cf acdeg acdfg bcdf abdfg abdefg acf abcdefg abcdfg'.split()
   example = [set(x) for x in example]
   pattern = {len(x): x for x in example}
-  return {get_sign(x, pattern): str(i) for i, x in enumerate(example)}
+  return {get_signature(x, pattern): str(i) for i, x in enumerate(example)}
 
 
-def get_sign(x, pattern):
-  return len(x), len(x & pattern[2]), len(x & pattern[3]), len(x & pattern[4])
+def get_signature(x, pattern):
+  a, b, c, d = len(x), x & pattern[2], x & pattern[3], x & pattern[4]
+  return a, len(b), len(c), len(d)
 
 
 def solve(patterns, outputs):
-  part1 = sum(len(n) in {2, 4, 3, 7} for row in outputs for n in row)
-
-  part2, signatures = 0, gen_signatures()
+  part1 = sum([len(n) in {2, 4, 3, 7} for row in outputs for n in row])
+  part2 = 0
+  signatures = gen_signatures()
   for pattern, output in zip(patterns, outputs):
-    part2 += int(''.join(signatures[get_sign(s, pattern)] for s in output))
+    part2 += int(''.join(signatures[get_signature(x, pattern)] for x in output))
   return part1, part2
 
 
