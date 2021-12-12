@@ -13,17 +13,17 @@ def read_puzzle(file):
 
 
 def dfs(node, graph, seen, twice):
-    paths = 0
-    if node == 'end': return 1
-    for dest in graph[node]:
-        if dest.islower():
-            if dest not in seen:
-                paths += dfs(dest, graph, seen | {dest}, twice)
-            elif twice and dest not in {'start', 'end'}:
-                paths += dfs(dest, graph, seen | {dest}, False)
-        else:
-            paths += dfs(dest, graph, seen, twice)
-    return paths
+  paths = 0
+  if node == 'end': return 1
+  for neighb in graph[node]:
+    if neighb.islower():
+      if neighb not in seen:
+        paths += dfs(neighb, graph, seen | {neighb}, twice)
+      elif twice and neighb not in {'start', 'end'}:
+        paths += dfs(neighb, graph, seen | {neighb}, False)
+    else:
+      paths += dfs(neighb, graph, seen, twice)
+  return paths
 
 
 def solve(puzzle):
