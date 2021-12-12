@@ -6,24 +6,23 @@ def read_puzzle(file):
   puzzle = defaultdict(list)
   with open(file) as f:
     for row in f:
-      a, b = row.strip().split('-')
+      a,b = row.strip().split('-')
       puzzle[a].append(b)
       puzzle[b].append(a)
   return puzzle
 
 
-def dfs(node, graph, visited, twice):
-  paths = 0
+def dfs(node, graph, visited, twice, counter = 0):
   if node == 'end': return 1
   for neighb in graph[node]:
-    if neighb.islower():
-      if neighb not in visited:
-        paths += dfs(neighb, graph, visited | {neighb}, twice)
-      elif twice and neighb not in {'start', 'end'}:
-        paths += dfs(neighb, graph, visited, False)
+    if neighb.isupper(): 
+      counter += dfs(neighb, graph, visited, twice)
     else:
-      paths += dfs(neighb, graph, visited, twice)
-  return paths    
+      if neighb not in visited:
+        counter += dfs(neighb, graph, visited | {neighb}, twice)
+      elif twice and neighb not in {'start', 'end'}:
+        counter += dfs(neighb, graph, visited, False)
+  return counter      
 
 
 def solve(puzzle):
