@@ -6,7 +6,7 @@ def read_puzzle(file):
     patterns, outputs = [], []
     for row in f:
       left, right = row.split('|')
-      patterns.append({len(x): set(x) for x in left.split()})
+      patterns.append({len(x): set(x) for x in left.split() if len(x) in {2,4}})
       outputs.append([set(x) for x in right.split()])
   return patterns, outputs
 
@@ -19,8 +19,7 @@ def gen_signatures():
 
 
 def get_signature(x, pattern):
-  a, b, c, d = len(x), x & pattern[2], x & pattern[3], x & pattern[4]
-  return a, len(b), len(c), len(d)
+  return len(x), len(x & pattern[2]), len(x & pattern[4])
 
 
 def solve(patterns, outputs):
