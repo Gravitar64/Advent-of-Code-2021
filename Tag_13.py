@@ -16,11 +16,9 @@ def fold(dim, value, dots):
   return folded
 
 
-def solve(dots, folds, part1=True):
-  if part1:
-    print(len(fold(*folds[0], dots)))
-    return
-
+def solve(dots, folds):
+  print(len(fold(*folds[0], dots)))
+  
   for dim, value in folds:
     dots = fold(dim, value, dots)
 
@@ -33,5 +31,4 @@ def solve(dots, folds, part1=True):
 
 start = pfc()
 solve(*read_puzzle('Tag_13.txt'))
-solve(*read_puzzle('Tag_13.txt'), False)
 print(pfc()-start)
