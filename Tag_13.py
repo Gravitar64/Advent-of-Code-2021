@@ -25,7 +25,7 @@ def solve(dots, folds):
   maxX, maxY = map(max, zip(*dots))
   for y in range(maxY+1):
     for x in range(maxX+1):
-      print('#' if (x, y) in dots else ' ', end='')
+      print('▓' if (x, y) in dots else ' ', end='')
     print()
 
 
