@@ -11,15 +11,15 @@ def read_puzzle(file):
   return template, insertions, chars
 
 
-def solve(template, insertions, chars, steps):
+def solve(old_temp, insertions, chars, steps):
   for _ in range(steps):
-    t2 = Counter()
-    for (a, b), value in template.items():
-      insert         = insertions[a+b]
-      t2[a+insert]  += value
-      t2[insert+b]  += value
-      chars[insert] += value
-    template = t2
+    new_temp = Counter()
+    for (a, b), value in old_temp.items():
+      insert               = insertions[a+b]
+      new_temp[a+insert]  += value
+      new_temp[insert+b]  += value
+      chars[insert]       += value
+    old_temp = new_temp
   return max(chars.values()) - min(chars.values())
 
 
