@@ -1,5 +1,5 @@
 from time import perf_counter as pfc
-import heapq
+import heapq as hp
 
 
 def read_puzzle(file):
@@ -8,21 +8,18 @@ def read_puzzle(file):
 
 
 def dijkstra(grid, target, start=(0, 0), risk=0):
-  queue = [(risk, start)]
-  minRisk = {start: risk}
-  visited = {start}
-
+  queue, minRisk = [(risk, start)], {start: risk}
+  
   while queue:
-    risk, (x, y) = heapq.heappop(queue)
+    risk, (x, y) = hp.heappop(queue)
     if (x, y) == target: return risk
 
     for neighb in ((x+1, y), (x, y+1), (x-1, y), (x, y-1)):
-      if neighb not in grid or neighb in visited: continue
-      visited.add(neighb)
+      if neighb not in grid or neighb in minRisk: continue
       newRisk = risk + grid[neighb]
       if newRisk < minRisk.get(neighb, 999999):
         minRisk[neighb] = newRisk
-        heapq.heappush(queue, (newRisk, neighb))
+        hp.heappush(queue, (newRisk, neighb))
 
 
 def solve(puzzle):
