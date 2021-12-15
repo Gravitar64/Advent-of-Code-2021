@@ -4,10 +4,10 @@ from collections import Counter
 
 def read_puzzle(file):
   with open(file) as f:
-    template, insertions = f.read().split('\n\n')
-    chars = Counter(template)
-    template = Counter(a+b for a, b in zip(template, template[1:]))
-    insertions = {x[:2]: x[6] for x in insertions.split('\n')}
+    raw = f.read().split('\n')
+    chars = Counter(raw[0])
+    template = Counter(a+b for a, b in zip(raw[0],raw[0][1:]))
+    insertions = {x[:2]: x[6] for x in raw[2:]}
   return template, insertions, chars
 
 
