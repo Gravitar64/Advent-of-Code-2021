@@ -6,36 +6,32 @@ def read_puzzle(file):
   with open(file) as f:
     return {(x,y):int(n) for y,row in enumerate(f.read().split('\n')) for x,n in enumerate(row)}
 
-def neighbor(x,y,graph):
-  best = 99
+def neighbors(x,y,graph):
+  n = []
   for neighb in ((x+1,y), (x,y+1)):
-    score = 0
     if neighb not in graph: continue
-    nx, ny = neighb
-    for n2 in ((nx+1,ny), (nx,ny+1)):
-      if n2 not in graph: continue
-      score += graph[n2]
-    if score < best:
-      best = score
-      best_neighb = neighb
-  return best_neighb
+    n.append((graph[neighb], neighb))
+  n = sorted(n)
+  return [x[1] for x in n]  
     
 
 
-best,path = 999999, [(0,0)]
-def dfs(node, graph, target, risk=0):
+best = 999999
+def dfs(node, graph, visited, target, risk=0):
   global best
   if node == target: return risk
-  neighb = neighbor(*node, graph)
-  path.append(neighb)
-  erg = dfs(neighb, graph, target, risk + graph[neighb])
-  return erg  
+  for neighb in neighbors(*node, graph):
+    if neighb in visited: continue
+    erg = dfs(neighb, graph, visited | {neighb}, target, risk + graph[neighb])
+    if erg < best:
+      best = erg
+      print(best)  
+  return best  
 
 
 def solve(puzzle):
   maxX, maxY = map(max,zip(*puzzle))
-  part1 = dfs((0,0), puzzle, (maxX, maxY))
-  return path
+  return dfs((0,0), puzzle, {(0,0)}, (maxX, maxY))
   
 
 
