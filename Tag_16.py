@@ -1,50 +1,52 @@
 from time import perf_counter as pfc
 import math
 
+class Transmission:
+  def __init__(self, bits):
+    self.bits = bits
+    self.pc = 0
+    self.sumVersions = 0
+
+  def get(self,n):
+    val = int(self.bits[self.pc:self.pc+n],2)
+    self.pc += n
+    return val  
+
 
 def read_puzzle(file):
   with open(file) as f:
-    return list(bin(int(f.read().strip(), 16))[2:])
+    return ''.join((bin(int(f.read().strip(), 16))[2:]))
 
 
-sum_versions = 0
-bits2int     = lambda x: int(''.join(x), 2)
 operations   = (sum, math.prod, min, max, None, lambda x: x[0] > x[1],
                 lambda x: x[0] < x[1], lambda x: x[0] == x[1])
 
 def parse(bits):
-  global sum_versions
-  version, bits = bits2int(bits[:3]), bits[3:]
-  typeID, bits  = bits2int(bits[:3]), bits[3:]
-  sum_versions += version
+  bits.sumVersions += bits.get(3)
+  typeID  = bits.get(3)
 
   if typeID == 4:
-    groups = []
+    result = 0
     while True:
-      group, bits = bits[:5], bits[5:]
-      groups += group[1:]
-      if group[0] == '0': return bits2int(groups), bits
-
-  lengthID = bits.pop(0)
+      cont = bits.get(1)
+      result = result * 16 + bits.get(4)
+      if not cont: return result
+  
   results = []
-  if lengthID == '0':
-    lenght, bits = bits2int(bits[:15]), bits[15:]
-    subpacket, bits = bits[:lenght], bits[lenght:]
-    while subpacket:
-      result, subpacket = parse(subpacket)
-      results.append(result)
-  else:
-    subpacketsCount, bits = bits2int(bits[:11]), bits[11:]
-    for _ in range(subpacketsCount):
-      result, bits = parse(bits)
-      results.append(result)
-
-  return operations[typeID](results), bits
+  if bits.get(1)
+    for _ in range(bits.get(11)):
+      results.append(parse(bits))
+  else:  
+    end = bits.pc + bits.get(15)
+    while bits.pc < end:
+      results.append(parse(bits))
+  return operations[typeID](results)
 
 
 def solve(puzzle):
-  part2, _ = parse(puzzle)
-  return sum_versions, part2
+  transmission = Transmission(puzzle)
+  part2 = parse(transmission)
+  return transmission.sumVersions, part2
 
 
 start = pfc()
