@@ -4,24 +4,18 @@ import math
 
 def read_puzzle(file):
   with open(file) as f:
-    bits = []
-    for c in f.read().strip():
-      bits.extend(bin(int(c, 16))[2:].zfill(4))
-  return bits
-
-
-def bits2int(bits):
-  return int(''.join(bits), 2)
+    return list(bin(int(f.read().strip(), 16))[2:])
 
 
 sum_versions = 0
-operations = (sum, math.prod, min, max, None, lambda x: x[0] > x[1],
-              lambda x: x[0] < x[1], lambda x: x[0] == x[1])
+bits2int     = lambda x: int(''.join(x), 2)
+operations   = (sum, math.prod, min, max, None, lambda x: x[0] > x[1],
+                lambda x: x[0] < x[1], lambda x: x[0] == x[1])
 
 def parse(bits):
   global sum_versions
   version, bits = bits2int(bits[:3]), bits[3:]
-  typeID, bits = bits2int(bits[:3]), bits[3:]
+  typeID, bits  = bits2int(bits[:3]), bits[3:]
   sum_versions += version
 
   if typeID == 4:
@@ -29,8 +23,7 @@ def parse(bits):
     while True:
       group, bits = bits[:5], bits[5:]
       groups += group[1:]
-      if group[0] == '0':
-        return bits2int(groups), bits
+      if group[0] == '0': return bits2int(groups), bits
 
   lengthID = bits.pop(0)
   results = []
