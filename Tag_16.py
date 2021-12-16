@@ -33,13 +33,15 @@ def parse(bits):
       if not cont: return result
   
   results = []
-  if bits.get(1)
+  if bits.get(1):
     for _ in range(bits.get(11)):
       results.append(parse(bits))
   else:  
-    end = bits.pc + bits.get(15)
+    lenght = bits.get(15)
+    end = bits.pc + lenght
     while bits.pc < end:
       results.append(parse(bits))
+  
   return operations[typeID](results)
 
 
