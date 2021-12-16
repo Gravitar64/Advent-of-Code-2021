@@ -12,7 +12,7 @@ def value(grid, x, y, w, h):
   return c if c < 10 else c % 9
 
 
-def dijkstra(grid, w, h, scale):
+def bfs(grid, w, h, scale):
   queue, visited = [(0, 0, 0)], {(0, 0)}
   
   while queue:
@@ -30,8 +30,8 @@ def dijkstra(grid, w, h, scale):
 def solve(puzzle):
   maxX, maxY = map(max, zip(*puzzle))
   w, h = maxX+1, maxY+1
-  part1 = dijkstra(puzzle, w, h, 1)
-  part2 = dijkstra(puzzle, w, h, 5)
+  part1 = bfs(puzzle, w, h, 1)
+  part2 = bfs(puzzle, w, h, 5)
   return part1, part2
 
 
