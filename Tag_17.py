@@ -8,14 +8,15 @@ def read_puzzle(file):
 
 
 def solve(minX, maxX, minY, maxY):
-  part1 = -minY * (-minY-1) // 2
+  part1 = -minY * (-minY-1) // 2 # gauss
 
   part2 = 0
   for dy in range(minY, -minY):
-    for dx in range(1, maxX+1):
+    #lowBound for dx = gauss inverse of minX (lowest possible velX to reach minX)
+    for dx in range(int(((8*minX+1)**0.5-1)/2), maxX+1): 
       x = y = 0
       vx, vy = dx, dy
-      while x <= maxX and y >= minY:
+      while vx != 0 and x <= maxX and y >= minY: 
         x, y = x+vx, y+vy
         vx, vy = max(0, vx-1), vy - 1
         if minX <= x <= maxX and minY <= y <= maxY:
