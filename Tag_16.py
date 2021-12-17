@@ -16,9 +16,7 @@ class Transmission:
 def read_puzzle(file):
   with open(file) as f:
     hexString = f.read().strip()
-    bins = bin(int(hexString, 16))[2:]
-    return bins.zfill(len(hexString)*4)
-
+    return bin(int(hexString, 16))[2:].zfill(len(hexString)*4)
 
 operations   = (sum, math.prod, min, max, None, lambda x: x[0] > x[1],
                 lambda x: x[0] < x[1], lambda x: x[0] == x[1])
