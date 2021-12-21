@@ -1,57 +1,32 @@
 from time import perf_counter as pfc
 from functools import lru_cache
-from collections import Counter
-from itertools import product
 
 
 def read_puzzle(filename):
   with open(filename) as f:
-    return [[int(x[-2:]), 0] for x in f.readlines()]
+    return [int(x[-2:]) for x in f.readlines()]
 
 
-def rolling_dice(puzzle):
-  dice, rolled = 0, 0
-  while True:
-    for player, (pos, score) in enumerate(puzzle):
-      rolls = 0
-      for _ in range(3):
-        dice = dice % 100 + 1
-        rolls += dice
-      rolled += 3
-      pos = (pos + rolls - 1) % 10 + 1
-      score += pos
-      puzzle[player][0] = pos
-      puzzle[player][1] = score
-      if score > 999:
-        return player, rolled
+def part_1(p1, p2, sc1=0, sc2=0, i=0):
+  if sc2 > 999: return 3*i*sc1
+  p1 = (p1 + 9*i+6) % 10 or 10
+  return part_1(p2, p1, sc2, sc1+p1, i+1)
 
 
-def part_2(p1, p2):
-  dice_freq = Counter(sum(p) for p in product(range(1, 4), repeat=3))
-
-  @lru_cache(maxsize=None)
-  def count_universes(p1, p2, sc1=0, sc2=0):
-    if sc1 >= 21: return (1, 0)
-    if sc2 >= 21: return (0, 1)
-    wins = (0, 0)
-    for roll_sum, freq in dice_freq.items():
-      new_pos = (p1 + roll_sum - 1) % 10 + 1
-      new_score = sc1 + new_pos
-      p2w, p1w = count_universes(p2, new_pos, sc2, new_score)
-      wins = (wins[0] + p1w*freq, wins[1] + p2w*freq)
-    return wins
-
-  return max(count_universes(p1, p2))
+@lru_cache(maxsize=None)
+def part_2(p1, p2, sc1=0, sc2=0):
+  if sc2 > 20: return 0, 1
+  wins = 0, 0
+  for roll_sum, freq in (3, 1), (4, 3), (5, 6), (6, 7), (7, 6), (8, 3), (9, 1):
+    new_pos = (p1 + roll_sum) % 10 or 10
+    new_score = sc1 + new_pos
+    p2w, p1w = part_2(p2, new_pos, sc2, new_score)
+    wins = wins[0] + p1w*freq, wins[1] + p2w*freq
+  return wins
 
 
 def solve(puzzle):
-  win_player, rolled = rolling_dice(puzzle)
-  part1 = puzzle[not win_player][1] * rolled
-
-  puzzle = read_puzzle('Tag_21.txt')
-  part2 = part_2(puzzle[0][0], puzzle[1][0])
-
-  return part1, part2
+  return part_1(*puzzle), max(part_2(*puzzle))
 
 
 start = pfc()
