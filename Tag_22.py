@@ -12,29 +12,36 @@ def read_puzzle(filename):
             for x in f.readlines()]
 
 
-def store_cube_volumes(puzzle, cubes, part1):
-  for sign, volume in puzzle:
-    if part1 and (max(volume) > 50 or min(volume) < -50): continue
+def size(x0, x1, y0, y1, z0, z1):
+  return (x1 - x0+1) * (y1-y0+1) * (z1-z0+1)
+
+
+def intersect(x0, x1, y0, y1, z0, z1, x2, x3, y2, y3, z2, z3):
+  ix0, ix1 = max(x0, x2), min(x1, x3)
+  iy0, iy1 = max(y0, y2), min(y1, y3)
+  iz0, iz1 = max(z0, z2), min(z1, z3)
+  if ix0 <= ix1 and iy0 <= iy1 and iz0 <= iz1:
+    return ix0, ix1, iy0, iy1, iz0, iz1 
+
+
+def store_cube_volumes(puzzle, part1, cubes=Counter()):
+  for sign1, volume1 in puzzle:
+    if part1 and (max(volume1) > 50 or min(volume1) < -50): continue
+    
     newCubes = Counter()
-    x0, x1, y0, y1, z0, z1 = volume
-    for (ex0, ex1, ey0, ey1, ez0, ez1), esign in cubes.items():
-      ix0, ix1 = max(x0, ex0), min(x1, ex1)
-      iy0, iy1 = max(y0, ey0), min(y1, ey1)
-      iz0, iz1 = max(z0, ez0), min(z1, ez1)
-      if ix0 <= ix1 and iy0 <= iy1 and iz0 <= iz1:
-        newCubes[(ix0, ix1, iy0, iy1, iz0, iz1)] -= esign
-    if sign > 0:
-      newCubes[volume] += sign
+    for volume2, sign2 in cubes.items():
+      if (inter := intersect(*volume1, *volume2)):
+        newCubes[inter] -= sign2
+    if sign1 == 1:
+      newCubes[volume1] += sign1
     cubes.update(newCubes)
+  
   return cubes
 
 
 def solve(puzzle, part1=True):
-  cubes = Counter()
-  cubes = store_cube_volumes(puzzle, cubes, part1)
-  print(len(cubes))
-  return sum((x1 - x0+1) * (y1-y0+1) * (z1-z0+1) * sign
-             for (x0, x1, y0, y1, z0, z1), sign in cubes.items())
+  cubes = store_cube_volumes(puzzle, part1)
+  return sum(size(*volume) * sign for volume, sign in cubes.items())
 
 
 start = pfc()
