@@ -32,8 +32,9 @@ def store_cube_volumes(puzzle, part1, cubes=Counter()):
     for volume2, sign2 in cubes.items():
       if (inter := intersect(*volume1, *volume2)):
         newCubes[inter] -= sign2
+        if newCubes[inter] == 0: del newCubes[inter]
     if sign1 == 1:
-      newCubes[volume1] += sign1
+      cubes[volume1] += sign1
     cubes.update(newCubes)
   
   return cubes
