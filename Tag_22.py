@@ -17,10 +17,13 @@ def size(x0, x1, y0, y1, z0, z1):
 
 
 def intersect(x0, x1, y0, y1, z0, z1, x2, x3, y2, y3, z2, z3):
-  ix0, ix1 = max(x0, x2), min(x1, x3)
-  iy0, iy1 = max(y0, y2), min(y1, y3)
-  iz0, iz1 = max(z0, z2), min(z1, z3)
-  if ix0 <= ix1 and iy0 <= iy1 and iz0 <= iz1:
+  #check for possible intersection
+  if  (x2 <= x1 and x0 <= x3 and y2 <= y1 and 
+       y0 <= y3 and z2 <= z1 and z0 <= z3):
+           
+    ix0, ix1 = max(x0, x2), min(x1, x3)
+    iy0, iy1 = max(y0, y2), min(y1, y3)
+    iz0, iz1 = max(z0, z2), min(z1, z3)
     return ix0, ix1, iy0, iy1, iz0, iz1 
 
 
