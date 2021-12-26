@@ -1,4 +1,5 @@
 from time import perf_counter as pfc
+from pprint import pprint
 
 #Ideen
 #1. kann ein amphipod aus der hallway in seinen Raum wechseln
@@ -42,42 +43,36 @@ def get_mapStr(puzzle):
 def swap(p1,p2):
   puzzle[p2], puzzle[p1] = puzzle[p1], puzzle[p2]  
 
-seen = set()
+seen, minCost = set(), 999999
+
 def dfs(puzzle,cost):
   global minCost
   mapStr = get_mapStr(puzzle)
-  #print(mapStr)
-  if mapStr == '...........ABCDABCD':
-    return cost
+  
+  if mapStr == '...B.......B.CDADCA':
+    print(mapStr, cost)  
+  if mapStr in seen: return
+  seen.add(mapStr)  
     
+  #1. Can amphi in hallway enter target room?
   for x in hallway:
     amphi = puzzle[(x,1)]
     if amphi == '.': continue
     if (pos2 := can_enter_room(x,puzzle,targets)):
       if blocked(x,pos2[0],puzzle): continue
       swap((x,1), pos2)
-      mapStr = get_mapStr(puzzle)
-      if mapStr in seen:
-        swap((x,1), pos2)
-        continue
-      seen.add(mapStr)
       if (erg := dfs(puzzle, cost+distance(x,1,*pos2)*energy[amphi])):
         minCost = min(erg,minCost)
-        print(minCost)
-      swap((x,1), pos2)
+      swap(pos2,(x,1))
       
   #2. Leave room possible?
   for room in targetsI:
     if (pos1 :=can_leave_room(room, puzzle, targetsI)):
       for pos2 in get_possible_hallway_pos(*pos1, hallway, puzzle):
+        amphi = puzzle[pos1]
         swap(pos1,pos2)
-        mapStr = get_mapStr(puzzle)
-        if mapStr in seen:
-          swap(pos1,pos2)
-          continue
-        seen.add(mapStr)
-        dfs(puzzle, cost+distance(*pos1,*pos2)*energy[puzzle[pos2]])
-        swap(pos1,pos2)
+        dfs(puzzle, cost+distance(*pos1,*pos2)*energy[amphi])
+        swap(pos2,pos1)
             
 
 def solve(puzzle):
@@ -90,10 +85,14 @@ def solve(puzzle):
 
 start = pfc()
 puzzle = read_puzzle('Tag_23.txt')
+save_state = get_mapStr(puzzle)
 energy = dict(A=1, B=10, C=100, D=1000)
 hallway = {1,2,4,6,8,10,11}
 targets = {'A':3, 'B':5, 'C':7, 'D':9}
 targetsI = {val:key for key,val in targets.items()}
-minCost = 999999
+
 print(solve(puzzle))
+save_state2 = get_mapStr(puzzle)
 print(pfc()-start)
+print(save_state == save_state2)
+print(len(seen))
