@@ -43,17 +43,16 @@ def get_mapStr(puzzle):
 def swap(p1,p2):
   puzzle[p2], puzzle[p1] = puzzle[p1], puzzle[p2]  
 
-seen, minCost = set(), 999999
+minCost,seen = 999999,set()
 
-def dfs(puzzle,cost):
+def dfs(puzzle,cost,depth=0):
   global minCost
   mapStr = get_mapStr(puzzle)
-  
-  if mapStr == '...B.......B.CDADCA':
-    print(mapStr, cost)  
-  if mapStr in seen: return
-  seen.add(mapStr)  
-    
+  if mapStr == '...........ABCDABCD':
+    return cost
+  if depth < 10:
+    print(depth*'  ', mapStr)
+      
   #1. Can amphi in hallway enter target room?
   for x in hallway:
     amphi = puzzle[(x,1)]
@@ -61,8 +60,15 @@ def dfs(puzzle,cost):
     if (pos2 := can_enter_room(x,puzzle,targets)):
       if blocked(x,pos2[0],puzzle): continue
       swap((x,1), pos2)
-      if (erg := dfs(puzzle, cost+distance(x,1,*pos2)*energy[amphi])):
-        minCost = min(erg,minCost)
+      mapStr = get_mapStr(puzzle)
+      if mapStr in seen: 
+        swap((x,1), pos2)
+        continue
+      seen.add(mapStr)
+      if (erg := dfs(puzzle, cost+distance(x,1,*pos2)*energy[amphi], depth +1)):
+        if erg < minCost:
+          minCost = erg
+          print(minCost)
       swap(pos2,(x,1))
       
   #2. Leave room possible?
@@ -71,7 +77,12 @@ def dfs(puzzle,cost):
       for pos2 in get_possible_hallway_pos(*pos1, hallway, puzzle):
         amphi = puzzle[pos1]
         swap(pos1,pos2)
-        dfs(puzzle, cost+distance(*pos1,*pos2)*energy[amphi])
+        mapStr = get_mapStr(puzzle)
+        if mapStr in seen: 
+          swap(pos1,pos2)
+          continue
+        seen.add(mapStr)
+        dfs(puzzle, cost+distance(*pos1,*pos2)*energy[amphi],depth + 1)
         swap(pos2,pos1)
             
 
