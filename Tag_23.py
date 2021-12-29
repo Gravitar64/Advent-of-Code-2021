@@ -1,5 +1,5 @@
 from time import perf_counter as pfc
-
+from heapq import heappush, heappop
 
 def read_puzzle(filename):
     with open(filename) as f:
@@ -11,20 +11,17 @@ def room_solved(room, puzzle, targetsI):
 
 
 def can_leave_room(room, puzzle, targetsI):
-    if room_solved(room, puzzle, targetsI):
-        return False
-    if puzzle[(room, 2)] in 'ABCD':
-        return (room, 2)
-    if puzzle[(room, 3)] in 'ABCD' and puzzle[(room, 3)] != targetsI[room]:
-        return (room, 3)
+    if room_solved(room, puzzle, targetsI): return False
+    if puzzle[(room, 2)] in 'ABCD': return (room, 2)
+    if puzzle[(room, 3)] in 'ABCD' and \
+       puzzle[(room, 3)] != targetsI[room]: return (room, 3)
 
 
 def can_enter_room(amphi, puzzle, targets):
     room = targets[amphi]
-    if all(puzzle[(room, y)] == '.' for y in range(2, 4)):
-        return room, 3
-    if puzzle[(room, 3)] == amphi and puzzle[(room, 2)] == '.':
-        return room, 2
+    if all(puzzle[(room, y)] == '.' for y in range(2, 4)): return room, 3
+    if puzzle[(room, 3)] == amphi and \
+       puzzle[(room, 2)] == '.': return room, 2
 
 
 def blocked(x1, x2, puzzle):
@@ -34,10 +31,8 @@ def blocked(x1, x2, puzzle):
 
 def get_possible_hallway_pos(x, _, hallway, puzzle):
     for x2 in hallway:
-        if puzzle[(x2, 1)] != '.':
-            continue
-        if blocked(x, x2, puzzle):
-            continue
+        if puzzle[(x2, 1)] != '.': continue
+        if blocked(x, x2, puzzle): continue
         yield (x2, 1)
 
 
@@ -70,6 +65,15 @@ def possible_moves(puzzle):
             moves.append((p1,p2,distance(*p1,*p2),amphi))
     return moves
 
+#Problem beim dfs ist, dass bereits erreichte Konstellationen über <if state in seen> 
+#übersprungen werden, obwohl diese Konstellation über eine günstigere Zugfolge erreicht
+#wurde. Nur über Dijkstra oder A* ist die lösbar, da dort nur dann in seen übersprungen wird,
+#falls die Kosten höher sind, als die dort beim State gespeicherten Kosten
+#
+#Deshalb wurde jetzt hier seen als Dictionary implementiert, mit dem State als Key und den 
+#bis dahin optimal gefundenen Kosten. Ein Überspringen findet nur dann statt, wenn die 
+#bisher gefundenen Kosten zu diesem State geringer sind, als die aktuellen Kosten
+
 results = []
 def dfs(cost,puzzle,path):
     global minCost
@@ -80,11 +84,12 @@ def dfs(cost,puzzle,path):
         moved = swap(p1,p2,puzzle.copy())
         state = get_mapStr(moved)
         new_cost = cost + dist * energy[amphi]
-        if state in seen: continue
-        if p2[1] == 1: seen.add(state)
+        if seen.get(state, 999999) <= new_cost: continue
+        seen[state] = new_cost
         erg, p = dfs(new_cost, moved, path+[state])
         if erg and erg < minCost:
             minCost = erg
+            print(erg)
             results.append((minCost,p))
     return False, None
 
@@ -107,7 +112,7 @@ energy = dict(A=1, B=10, C=100, D=1000)
 hallway = {1, 2, 4, 6, 8, 10, 11}
 targets = {'A': 3, 'B': 5, 'C': 7, 'D': 9}
 targetsI = {val: key for key, val in targets.items()}
-minCost, seen = 1<<32, set(get_mapStr(puzzle))
+minCost, seen = 1<<32, {get_mapStr(puzzle):0}
 
 print(solve(puzzle))
 print(pfc()-start)
