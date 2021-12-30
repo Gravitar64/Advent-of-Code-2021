@@ -15,15 +15,13 @@ def can_leave_room(room, puzzle, part1):
         if puzzle[i] != '.': return i    
 
 
-def can_enter_room(amphi, puzzle, part1):
+def can_enter_room(i1,amphi, puzzle, part1):
     t = targets1 if part1  else targets2
     bestI = False
     for i in t[amphi]:
-        if puzzle[i] == ".":
-            bestI = i
-        elif puzzle[i] != amphi:
-            return False
-    return bestI
+        if puzzle[i] == ".": bestI = i
+        elif puzzle[i] != amphi: return False
+    if not blocked(i1, stepout[amphi], puzzle): return bestI
 
 
 def blocked(i1, i2, puzzle):
@@ -39,9 +37,8 @@ def get_possible_hallway_pos(i1, puzzle):
 
 
 def distance(i1, i2):
-    f, t = min(i1, i2), max(i1, i2)
-    step = stepout[targetsI[t]]
-    return abs(step - f) + (t-7)//4
+    if i1 > i2: i1,i2 = i2,i1
+    return abs(stepout[targetsI[i2]] - i1) + (i2-7)//4
 
 
 def swap(i1, i2, puzzle):
@@ -54,8 +51,7 @@ def possible_moves(puzzle,part1):
     moves = []
     for i1 in hallway:
         if puzzle[i1] == ".": continue
-        if not (i2 := can_enter_room(puzzle[i1], puzzle, part1)): continue
-        if blocked(i1, stepout[puzzle[i1]], puzzle): continue
+        if not (i2 := can_enter_room(i1,puzzle[i1], puzzle, part1)): continue
         moves.append((i1, i2, distance(i1, i2)))
     for room in "ABCD":
         if not (i1 := can_leave_room(room, puzzle, part1)): continue
@@ -81,8 +77,8 @@ def solve(puzzle,part1=True):
 energy = dict(A=1, B=10, C=100, D=1000)
 hallway = {0, 1, 3, 5, 7, 9, 10}
 stepout = {"A": 2, "B": 4, "C": 6, "D": 8}
-targets1 = {"A": [11,15], "B": [12,16], "C": [13,17], "D": [14,18]}
-targets2 = {"A": [11,15,19,23], "B": [12,16,20,24], "C": [13,17,21,25], "D": [14, 18,22,26]}
+targets1 = {"A": range(11,16,4), "B": range(12,17,4), "C": range(13,18,4), "D": range(14,19,4)}
+targets2 = {"A": range(11,24,4), "B": range(12,25,4), "C": range(13,26,4), "D": range(14,27,4)}
 targetsI = {v: key for key, val in targets2.items() for v in val}
 
 
