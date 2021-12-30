@@ -52,7 +52,7 @@ def get_possible_hallway_pos(i1, hallway, puzzle, stepout, targetsI):
 def distance(i1, i2, stepout, targetsI):
     f, t = min(i1, i2), max(i1, i2)
     step = stepout[targetsI[t]]
-    d = abs(step - f) + (t-7)//4
+    d = abs(step - f) + (t-)//4
     return d
 
 
@@ -80,17 +80,20 @@ def possible_moves(puzzle):
     return moves
 
 
-def solve(puzzle):
+def solve(puzzle,part1=True):
     queue, seen = [(0, puzzle)], {puzzle: 0}
+    solution = "...........ABCDABCD" if part1 else "...........ABCDABCDABCDABCD"
     while queue:
         cost, state = heappop(queue)
-        if state == "...........ABCDABCD":
+        if state == solution:
             return cost
         for i1, i2, dist in possible_moves(state):
             new_cost = cost + dist * energy[state[i1]]
             moved = swap(i1, i2, state)
             if seen.get(moved, 999999) <= new_cost:
                 continue
+            #if i1 >22:
+            #    print(f'{state}\n{moved} {i1}->{i2} {dist} {new_cost}\n')
             seen[moved] = new_cost
             heappush(queue, (new_cost, moved))
 
@@ -98,10 +101,11 @@ def solve(puzzle):
 energy = dict(A=1, B=10, C=100, D=1000)
 hallway = {0, 1, 3, 5, 7, 9, 10}
 stepout = {"A": 2, "B": 4, "C": 6, "D": 8}
-targets = {"A": [11, 15], "B": [12, 16], "C": [13, 17], "D": [14, 18]}
+targets = {"A": [11,15,19,23], "B": [12,16,20,24], "C": [13,17,21,25], "D": [14, 18,22,26]}
 targetsI = {v: key for key, val in targets.items() for v in val}
 
 
 start = pfc()
-print(solve(read_puzzle("Tag_23.txt")))
+#print(solve(read_puzzle("Tag_23_a.txt")))
+print(solve(read_puzzle("Tag_23_b.txt"),False))
 print(pfc() - start)
