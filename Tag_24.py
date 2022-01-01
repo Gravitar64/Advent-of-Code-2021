@@ -18,31 +18,28 @@ def get_relevant_adds(puzzle):
     return div1, div26
 
 
-def get_model_no(div1, div26, part1):
-    modelNo = [0] * 14
+def get_model_no(div1, div26):
+    part1, part2 = [0] * 14, [0] * 14
     stack = []
-    startDigit = 9 if part1 else 1
     for i, (a, b) in enumerate(zip(div1, div26)):
         if a:
             stack.append((i, a))
         else:
             ia, a = stack.pop()
             diff = a + b
-            if part1:
-                modelNo[ia] = min(startDigit, startDigit - diff)
-                modelNo[i] = min(startDigit, startDigit + diff)
-            else:
-                modelNo[ia] = max(startDigit, startDigit - diff)
-                modelNo[i] = max(startDigit, startDigit + diff)
-    return modelNo
+            part1[ia] = min(9, 9 - diff)
+            part1[i]  = min(9, 9 + diff)
+            part2[ia] = max(1, 1 - diff)
+            part2[i]  = max(1, 1 + diff)
+    return part1, part2
 
 
-def solve(puzzle, part1=True):
+def solve(puzzle, ):
     div1, div26 = get_relevant_adds(puzzle)
-    return "".join(map(str, get_model_no(div1, div26, part1)))
+    part1, part2 = get_model_no(div1, div26)
+    return int("".join(map(str, part1))), int("".join(map(str, part2)))
 
 
 start = pfc()
 print(solve(read_puzzle("Tag_24.txt")))
-print(solve(read_puzzle("Tag_24.txt"), False))
 print(pfc() - start)
