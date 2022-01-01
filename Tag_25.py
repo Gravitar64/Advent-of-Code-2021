@@ -23,21 +23,14 @@ def nextPos(x, y, c, w, h):
 def findStable(hs, vs, w, h, step = 0):
     while True:
         step += 1
-        new_hs = set()
+        new_hs, new_vs = set(), set() 
         for pos in hs:
             newPos = nextPos(*pos, ">", w, h)
-            if newPos in hs or newPos in vs:
-                new_hs.add(pos)
-            else:
-                new_hs.add(newPos)
-        new_vs = set()
+            new_hs.add(pos) if newPos in hs or newPos in vs else new_hs.add(newPos)
         for pos in vs:
             newPos = nextPos(*pos, "v", w, h)
-            if newPos in vs or newPos in new_hs:
-                new_vs.add(pos)
-            else:
-                new_vs.add(newPos)
-        if vs == new_vs and hs == new_hs: return step
+            new_vs.add(pos) if newPos in new_hs or newPos in vs else new_vs.add(newPos)
+        if hs == new_hs and vs == new_vs: return step
         hs, vs = new_hs, new_vs
 
 
