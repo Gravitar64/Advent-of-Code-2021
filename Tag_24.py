@@ -20,24 +20,25 @@ def get_relevant_adds(puzzle):
 
 
 def find_modellNo(digits,div1, div26):
-    z = 0
-    res = [0]*14
-    digits_idx = 0
+    z = digits_idx = 0
+    modellNo = [0]*14
     for i in range(14):
         d1, d26 = div1[i], div26[i]
-        if d1 == None:
-            res[i]=z%26+d26
-            z//=26
-            if not (0 < res[i] < 10): return False
-        else:
+        if d1 != None:
             z = z*26 +digits[digits_idx]+d1
-            res[i] = digits[digits_idx]
+            modellNo[i] = digits[digits_idx]
             digits_idx +=1
-    return res            
+        else:
+            w = z%26+d26
+            if not (0 < w < 10): return False
+            modellNo[i]=w
+            z//=26
+    return modellNo            
 
 
 def solve(puzzle, part1=True):
     div1, div26 = get_relevant_adds(puzzle)
+    
     number_Space = product(range(9,0,-1),repeat=7) if part1 else \
                    product(range(1,10),repeat=7) 
     
