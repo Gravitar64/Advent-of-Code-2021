@@ -6,18 +6,14 @@ def read_puzzle(filename):
     with open(filename) as f:
         for y, row in enumerate(f.read().split("\n")):
             for x, c in enumerate(row):
-                if c == "v":
-                    vs.add((x, y))
-                elif c == ">":
-                    hs.add((x, y))
+                if c == "v":    vs.add((x, y))
+                elif c == ">":  hs.add((x, y))
     return hs, vs
 
 
 def nextPos(x, y, c, w, h):
-    if c == ">":
-        return (x + 1) % w, y
-    else:
-        return x, (y + 1) % h
+    if c == ">": return (x + 1) % w, y
+    else:        return x, (y + 1) % h
 
 
 def findStable(hs, vs, w, h, step = 0):
