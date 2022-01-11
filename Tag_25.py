@@ -6,19 +6,19 @@ import numpy as np
 
 
 def read_puzzle(filename):
-    with open(filename) as f:
-        return np.array(list(map(list, f.read().strip().split())))
+  with open(filename) as f:
+    return np.array(list(map(list, f.read().strip().split())))
 
 
 def solve(puzzle):
-    moved = [True]
-    while any(moved[-2:]):
-        for c, axis in ((">", 1), ("v", 0)):
-            allowed_moves = (np.roll(puzzle, -1, axis) == ".") & (puzzle == c)
-            moved.append(np.any(allowed_moves))
-            puzzle[allowed_moves] = "."
-            puzzle[np.roll(allowed_moves, 1, axis)] = c
-    return len(moved) // 2
+  moved = [True]
+  while any(moved[-2:]):
+    for c, axis in ((">", 1), ("v", 0)):
+      allowed_moves = (np.roll(puzzle, -1, axis) == ".") & (puzzle == c)
+      moved.append(np.any(allowed_moves))
+      puzzle[allowed_moves] = "."
+      puzzle[np.roll(allowed_moves, 1, axis)] = c
+  return len(moved) // 2
 
 
 start = pfc()
